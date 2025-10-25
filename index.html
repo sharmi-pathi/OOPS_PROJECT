@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TrackBack – Smart Lost & Found</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ========== LANDING + AUTH (single interface) ========== -->
+  <section id="auth-screen" class="screen auth-active">
+    <div class="auth-card">
+      <img src="logo.jpg" alt="TrackBack logo" class="auth-logo" />
+      <h1 class="app-title">🔍 TrackBack</h1>
+      <p class="app-sub">Smart Lost & Found System ✨</p>
+
+      <div class="auth-forms">
+        <!-- Login form (default) -->
+        <div id="loginBox" class="auth-box active">
+          <input id="loginUser" placeholder="Username" autocomplete="username" />
+          <input id="loginPass" placeholder="Password" type="password" autocomplete="current-password" />
+          <button class="primary" onclick="login()">🔐 Login</button>
+          <p class="small">
+            Don’t have an account? <span class="link" onclick="toggleAuth('signup')">Sign up</span>
+          </p>
+        </div>
+
+        <!-- Signup form -->
+        <div id="signupBox" class="auth-box">
+          <input id="signupUser" placeholder="Choose a username" />
+          <input id="signupPass" placeholder="Choose a password" type="password" />
+          <button class="primary" onclick="signup()">✨ Create Account</button>
+          <p class="small">
+            Already have an account? <span class="link" onclick="toggleAuth('login')">Login</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MAIN INTERFACE (hidden until login) ========== -->
+  <section id="main-screen" class="screen">
+    <header class="main-header">
+      <div class="header-inner">
+        <div class="logo-left">
+          <img src="logo.jpg" alt="logo small" class="small-logo" />
+          <div class="title-block">
+            <h2 class="brand">TrackBack</h2>
+            <p class="tag">Find it • Report it • Reunite 💖</p>
+          </div>
+        </div>
+
+        <!-- The top nav — placed a bit down using padding so it is not stuck at very top -->
+        <nav class="top-nav">
+          <button onclick="showSection('dashboard')">🏠 Dashboard</button>
+          <button onclick="showSection('found')">🔎 Report Found</button>
+          <button onclick="showSection('lost')">😢 Report Lost</button>
+          <button onclick="showSection('search')">🔍 Search</button>
+          <button onclick="showSection('userInfo')">👤 My Info</button>
+          <button class="danger" onclick="logout()">🚪 Logout</button>
+          <span id="userDisplay" class="user-display"></span>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Dashboard -->
+      <section id="dashboard" class="panel active">
+        <h2>Welcome, <span id="userName">Friend</span>! 🎉</h2>
+        <p class="lead">Use the navigation to report found / lost items, or search the collection. Notifications will appear at the top.</p>
+        <div class="cards-row">
+          <div class="info-card">💡 Tip: Attach an image in found/lost reports to increase matching chances.</div>
+          <div class="info-card">⚡ Fast matching: item name matches trigger instant notifications.</div>
+        </div>
+
+        <!-- History blocks -->
+        <div class="history-row">
+          <div class="history-card">
+            <h3>Your history</h3>
+            <div id="userHistory" class="history-list small">No history yet.</div>
+          </div>
+
+          <div class="history-card">
+            <h3>Recent reports (global)</h3>
+            <div id="globalHistory" class="history-list small">No reports yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Report Found -->
+      <section id="found" class="panel">
+        <h2>🔎 Report Found Item</h2>
+        <form id="foundForm" class="report-form">
+          <input id="foundName" placeholder="Item name (e.g., Wallet)" required />
+          <textarea id="foundDescription" placeholder="Description (color, brand, marks)" rows="3"></textarea>
+          <input id="foundLocation" placeholder="Location found (e.g., Library)" />
+          <input id="foundContact" placeholder="Your contact (phone or email)" />
+          <label class="file-label">📎 Attach image (optional)
+            <input id="foundImage" type="file" accept="image/*" />
+          </label>
+          <div id="foundPreview" class="img-preview hidden"></div>
+          <button type="submit" class="primary">Submit Found 📤</button>
+        </form>
+      </section>
+
+      <!-- Report Lost -->
+      <section id="lost" class="panel">
+        <h2>😢 Report Lost Item</h2>
+        <form id="lostForm" class="report-form">
+          <input id="lostName" placeholder="Item name (e.g., Wallet)" required />
+          <textarea id="lostDescription" placeholder="Description (color, brand, marks)" rows="3"></textarea>
+          <input id="lostLocation" placeholder="Last seen location (e.g., Cafeteria)" />
+          <input id="lostContact" placeholder="Your contact (phone or email)" />
+          <label class="file-label">📎 Attach image (optional)
+            <input id="lostImage" type="file" accept="image/*" />
+          </label>
+          <div id="lostPreview" class="img-preview hidden"></div>
+          <button type="submit" class="primary">Report Lost 📨</button>
+        </form>
+      </section>
+
+      <!-- Search -->
+      <section id="search" class="panel">
+        <h2>🔍 Search Items</h2>
+        <div class="search-row">
+          <input id="searchInput" placeholder="Search by item name..." />
+          <input id="searchLocation" placeholder="Filter by location (optional)" />
+          <button onclick="searchItem()" class="primary">Search</button>
+        </div>
+        <div id="searchResults" class="cards-grid"></div>
+      </section>
+
+      <!-- User Info -->
+      <section id="userInfo" class="panel">
+        <h2>👤 Your Profile</h2>
+        <p id="profileInfo">Username: <strong id="profileName"></strong></p>
+        <p class="small">This demo stores users and items in browser localStorage when backend is not enabled. Flip `USE_BACKEND` in script.js to enable backend REST calls (Spring Boot server needed).</p>
+
+        <div style="margin-top:12px;">
+          <label class="small">Backend mode:
+            <span id="backendStatus" class="small">Local storage (default)</span>
+          </label>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <!-- notification container (popups inserted here) -->
+  <div id="notif-container"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
